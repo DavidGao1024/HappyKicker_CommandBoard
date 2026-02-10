@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm --version:*)",
+      "WebSearch",
+      "Bash(npm create vite@latest . -- --template vue-ts)",
+      "Bash(npx --yes create-vite:*)",
+      "Bash(npm install)",
+      "Bash(npx vue-tsc -b --noEmit)",
+      "Bash(npx vite build)",
+      "Bash(timeout 5 npx vite:*)",
+      "Bash(npx vite)",
+      "mcp__chrome-devtools__navigate_page",
+      "Bash(npm run build)"
+    ]
+  }
+}
