@@ -162,6 +162,34 @@ html, body, #app {
   overflow: hidden;
 }
 
+@media (orientation: portrait) {
+  .pitch-container {
+    padding: 2px;
+  }
+
+  .toolbar {
+    gap: 8px;
+    padding: 4px 8px;
+    min-height: 36px;
+  }
+
+  .toolbar select {
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+
+  .tool-buttons button {
+    min-width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .color-btn {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .pitch-svg {
   width: 100%;
   height: 100%;
@@ -357,4 +385,71 @@ html, body, #app {
 .roster-name:focus {
   outline: none;
   border-color: #e94560;
+}
+
+/* Roster quick-pick in PlayerEditDialog */
+.roster-pick {
+  margin-bottom: 12px;
+}
+
+.roster-pick > label {
+  display: block;
+  font-size: 12px;
+  color: #8899aa;
+  margin-bottom: 6px;
+}
+
+.roster-pick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.roster-pick-btn {
+  padding: 4px 10px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.roster-pick-btn:hover {
+  background: #0f3460;
+  border-color: #e94560;
+}
+
+.roster-pick-btn.selected {
+  background: #e94560;
+  border-color: #e94560;
+  color: white;
+}
+
+/* Position label (read-only) in PlayerEditDialog */
+.position-label {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #1a1a2e;
+  color: #e94560;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+/* Position label in RosterEditDialog rows */
+.roster-pos-label {
+  width: 30px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: monospace;
+  color: #e94560;
+  text-align: center;
 }

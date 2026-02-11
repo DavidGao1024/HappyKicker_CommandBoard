@@ -53,9 +53,9 @@ export function usePlayers() {
   }
 
   function updatePlayerInfo(id: string, name: string) {
-    const player = players.value.find(p => p.id === id)
-    if (player) {
-      player.name = name
+    const idx = players.value.findIndex(p => p.id === id)
+    if (idx !== -1) {
+      players.value[idx] = { ...players.value[idx], name }
     }
   }
 

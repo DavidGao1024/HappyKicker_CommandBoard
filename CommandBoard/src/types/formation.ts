@@ -7,12 +7,14 @@ export interface Formation {
   name: string
   label: string
   positions: FormationPosition[] // 9 positions: GK + 8 outfield
+  positionLabels: string[]       // 9 two-letter abbreviations matching positions
 }
 
 export const FORMATIONS: Formation[] = [
   {
     name: '3-3-2',
     label: '3-3-2',
+    positionLabels: ['GK', 'LB', 'CB', 'RB', 'LM', 'CM', 'RM', 'ST', 'ST'],
     positions: [
       { x: 0.50, y: 0.92 }, // GK
       { x: 0.20, y: 0.72 }, // CB-L
@@ -28,6 +30,7 @@ export const FORMATIONS: Formation[] = [
   {
     name: '3-2-3',
     label: '3-2-3',
+    positionLabels: ['GK', 'LB', 'CB', 'RB', 'LM', 'RM', 'LW', 'ST', 'RW'],
     positions: [
       { x: 0.50, y: 0.92 },
       { x: 0.20, y: 0.72 },
@@ -43,6 +46,7 @@ export const FORMATIONS: Formation[] = [
   {
     name: '2-3-3',
     label: '2-3-3',
+    positionLabels: ['GK', 'LB', 'RB', 'LM', 'CM', 'RM', 'LW', 'ST', 'RW'],
     positions: [
       { x: 0.50, y: 0.92 },
       { x: 0.35, y: 0.72 },
@@ -58,6 +62,7 @@ export const FORMATIONS: Formation[] = [
   {
     name: '1-3-2-2',
     label: '1-3-2-2',
+    positionLabels: ['GK', 'CB', 'LM', 'CM', 'RM', 'AM', 'AM', 'ST', 'ST'],
     positions: [
       { x: 0.50, y: 0.92 },
       { x: 0.50, y: 0.76 },
@@ -73,6 +78,7 @@ export const FORMATIONS: Formation[] = [
   {
     name: '3-4-1',
     label: '3-4-1',
+    positionLabels: ['GK', 'LB', 'CB', 'RB', 'LM', 'CM', 'CM', 'RM', 'ST'],
     positions: [
       { x: 0.50, y: 0.92 },
       { x: 0.20, y: 0.72 },
@@ -88,6 +94,7 @@ export const FORMATIONS: Formation[] = [
   {
     name: '2-4-2',
     label: '2-4-2',
+    positionLabels: ['GK', 'LB', 'RB', 'LM', 'CM', 'CM', 'RM', 'ST', 'ST'],
     positions: [
       { x: 0.50, y: 0.92 },
       { x: 0.35, y: 0.72 },

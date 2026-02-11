@@ -11,7 +11,7 @@
     <circle
       :cx="player.x"
       :cy="player.y"
-      :r="hitRadius"
+      :r="props.hitRadius"
       fill="white"
       fill-opacity="0"
       pointer-events="all"
@@ -20,10 +20,10 @@
     <circle
       :cx="player.x"
       :cy="player.y"
-      :r="radius"
+      :r="props.radius"
       :fill="fillColor"
       :stroke="strokeColor"
-      :stroke-width="2.5"
+      :stroke-width="2.5 * props.radius / 18"
     />
     <text
       v-if="player.name"
@@ -51,6 +51,8 @@ import { usePitch } from '@/composables/usePitch'
 const props = defineProps<{
   player: Player
   svgEl: SVGSVGElement | null
+  radius: number
+  hitRadius: number
 }>()
 
 const emit = defineEmits<{
@@ -62,10 +64,7 @@ const emit = defineEmits<{
 
 const { clampX, clampY } = usePitch()
 
-const radius = 18
-const hitRadius = 36
-
-// Adapt font size to name length for fitting inside circle
+// Adapt font size to name length and radius
 const displayName = computed(() => {
   const name = props.player.name
   if (name.length <= 3) return name
@@ -73,10 +72,11 @@ const displayName = computed(() => {
 })
 
 const nameFontSize = computed(() => {
+  const scale = props.radius / 18
   const len = displayName.value.length
-  if (len <= 1) return 14
-  if (len <= 2) return 12
-  return 10
+  if (len <= 1) return 14 * scale
+  if (len <= 2) return 12 * scale
+  return 10 * scale
 })
 
 const fillColor = computed(() =>

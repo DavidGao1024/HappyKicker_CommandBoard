@@ -54,6 +54,7 @@
     <PlayerEditDialog
       :visible="editDialogVisible"
       :player="editingPlayer"
+      :position-label="editingPlayer ? positionLabelMap[editingPlayer.id] ?? '' : ''"
       @close="editDialogVisible = false"
       @confirm="onEditConfirm"
     />
@@ -61,6 +62,7 @@
     <RosterEditDialog
       :visible="rosterDialogVisible"
       :players="players"
+      :position-labels="positionLabelMap"
       @close="rosterDialogVisible = false"
       @confirm="onRosterConfirm"
     />
@@ -68,13 +70,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { SVG_WIDTH, SVG_HEIGHT } from '@/composables/usePitch'
 import { usePlayers } from '@/composables/usePlayers'
 import { useFormations } from '@/composables/useFormations'
 import { useDrawing, DRAWING_COLORS } from '@/composables/useDrawing'
 import { useHistory } from '@/composables/useHistory'
 import type { Player } from '@/types/player'
+import { FORMATIONS } from '@/types/formation'
 import FootballPitch from './FootballPitch.vue'
 import PlayersLayer from './PlayersLayer.vue'
 import DrawingsLayer from './DrawingsLayer.vue'
@@ -233,6 +236,18 @@ function onResetAll() {
 // --- Player edit ---
 const editDialogVisible = ref(false)
 const editingPlayer = ref<Player | null>(null)
+
+// Compute position label map: player id → position abbreviation
+const positionLabelMap = computed(() => {
+  const map: Record<string, string> = {}
+  const homeF = FORMATIONS.find(f => f.name === homeFormation.value)
+  const awayF = FORMATIONS.find(f => f.name === awayFormation.value)
+  const home = players.value.filter(p => p.team === 'home')
+  const away = players.value.filter(p => p.team === 'away')
+  home.forEach((p, i) => { map[p.id] = homeF?.positionLabels[i] ?? '' })
+  away.forEach((p, i) => { map[p.id] = awayF?.positionLabels[i] ?? '' })
+  return map
+})
 
 function onEditPlayer(player: Player) {
   editingPlayer.value = player

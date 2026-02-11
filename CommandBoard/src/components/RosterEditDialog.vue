@@ -15,12 +15,14 @@
               class="roster-row"
             >
               <span class="roster-index">{{ i + 1 }}</span>
+              <span class="roster-pos-label">{{ positionLabels[p.id] || '--' }}</span>
               <input
                 type="text"
                 class="roster-name"
                 :value="localData[p.id]"
                 maxlength="10"
                 placeholder="姓名"
+                list="roster-datalist"
                 @input="onNameChange(p.id, $event)"
               />
             </div>
@@ -36,17 +38,22 @@
               class="roster-row"
             >
               <span class="roster-index">{{ i + 1 }}</span>
+              <span class="roster-pos-label">{{ positionLabels[p.id] || '--' }}</span>
               <input
                 type="text"
                 class="roster-name"
                 :value="localData[p.id]"
                 maxlength="10"
                 placeholder="姓名"
+                list="roster-datalist"
                 @input="onNameChange(p.id, $event)"
               />
             </div>
           </div>
         </div>
+        <datalist id="roster-datalist">
+          <option v-for="name in ROSTER_NAMES" :key="name" :value="name" />
+        </datalist>
         <div class="dialog-actions">
           <button class="btn-cancel" @click="$emit('close')">取消</button>
           <button class="btn-confirm" @click="onConfirm">确定</button>
@@ -59,10 +66,12 @@
 <script setup lang="ts">
 import { computed, watch, reactive } from 'vue'
 import type { Player } from '@/types/player'
+import { ROSTER_NAMES } from '@/data/roster'
 
 const props = defineProps<{
   visible: boolean
   players: Player[]
+  positionLabels: Record<string, string>
 }>()
 
 const emit = defineEmits<{
