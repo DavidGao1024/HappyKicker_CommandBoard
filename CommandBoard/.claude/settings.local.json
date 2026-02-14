@@ -12,7 +12,8 @@
       "Bash(timeout 5 npx vite:*)",
       "Bash(npx vite)",
       "mcp__chrome-devtools__navigate_page",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(timeout:*)"
     ]
   }
 }

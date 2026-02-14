@@ -92,4 +92,17 @@ PlayersLayer 中 `sortedPlayers` 按客队（红色）→ 主队（白色）排�
 
 ### 球员名单
 
-`src/data/roster.ts` 存放预设球员名单（32 人）。PlayerEditDialog 提供名字按钮网格（支持输入过滤），RosterEditDialog 通过 HTML5 datalist 提供自动补全。
+`src/data/roster.ts` 存放预设球员名单（32 人）。
+
+### 编辑弹窗交互
+
+**PlayerEditDialog（单个球员编辑）**：
+- 单击球员圆点（非拖拽）直接打开编辑弹窗
+- 点击名单按钮后直接确认并关闭弹窗
+- 点击输入框清空当前名字
+
+**RosterEditDialog（批量球员编辑）**：
+- 使用自定义下拉列表（替代 HTML5 datalist），悬浮在最上层（z-index: 10000）
+- 点击输入框弹出球员选择列表，选择后自动填入并关闭
+- 选择球员时自动清除该球员的老位置（允许球员换位）
+- 所有球员始终可选，无过滤限制

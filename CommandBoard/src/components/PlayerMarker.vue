@@ -91,7 +91,6 @@ const textColor = computed(() =>
 
 const isDragging = ref(false)
 let hasMoved = false
-let lastTapTime = 0
 
 function getSvgPoint(e: PointerEvent): { x: number; y: number } | null {
   const svg = props.svgEl
@@ -127,15 +126,9 @@ function onPointerUp(_e: PointerEvent) {
   isDragging.value = false
   emit('dragEnd')
 
-  // Double-tap detection for editing (replaces dblclick which is unreliable on mobile)
+  // Single tap to edit
   if (!hasMoved) {
-    const now = Date.now()
-    if (now - lastTapTime < 400) {
-      emit('edit', props.player)
-      lastTapTime = 0
-    } else {
-      lastTapTime = now
-    }
+    emit('edit', props.player)
   }
 }
 </script>

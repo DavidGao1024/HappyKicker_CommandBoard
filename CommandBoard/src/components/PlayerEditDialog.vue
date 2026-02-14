@@ -16,9 +16,10 @@
             placeholder="输入姓名或从下方选择"
             ref="nameInput"
             @keydown.enter="onConfirm"
+            @click="localName = ''"
           />
         </div>
-        <div class="roster-pick">
+        <div class="roster-pick" v-show="!hideRoster">
           <label>快速选择</label>
           <div class="roster-pick-grid">
             <button
@@ -59,6 +60,7 @@ const emit = defineEmits<{
 
 const localName = ref('')
 const nameInput = ref<HTMLInputElement | null>(null)
+const hideRoster = ref(false)
 
 const filteredRoster = computed(() => {
   const q = localName.value.trim()
@@ -69,12 +71,15 @@ const filteredRoster = computed(() => {
 watch(() => props.player, (p) => {
   if (p) {
     localName.value = p.name
+    hideRoster.value = false
     nextTick(() => nameInput.value?.select())
   }
 })
 
 function pickName(name: string) {
+  hideRoster.value = true
   localName.value = name
+  nextTick(() => onConfirm())
 }
 
 function onConfirm() {
