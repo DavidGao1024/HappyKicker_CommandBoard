@@ -18,6 +18,7 @@
       @clear-drawings="onClearDrawings"
       @reset-all="onResetAll"
       @edit-roster="rosterDialogVisible = true"
+      @save-screenshot="onSaveScreenshot"
     />
 
     <div class="pitch-container">
@@ -78,6 +79,7 @@ import { useDrawing, DRAWING_COLORS } from '@/composables/useDrawing'
 import { useHistory } from '@/composables/useHistory'
 import type { Player } from '@/types/player'
 import { FORMATIONS } from '@/types/formation'
+import qrCodeUrl from '@/assets/wxq.png'
 import FootballPitch from './FootballPitch.vue'
 import PlayersLayer from './PlayersLayer.vue'
 import DrawingsLayer from './DrawingsLayer.vue'
@@ -268,5 +270,85 @@ function onRosterConfirm(changes: { id: string; name: string }[]) {
   for (const c of changes) {
     updatePlayerInfo(c.id, c.name)
   }
+}
+
+// --- Screenshot ---
+function onSaveScreenshot() {
+  const svg = svgRef.value
+  if (!svg) return
+
+  const clone = svg.cloneNode(true) as SVGSVGElement
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  clone.setAttribute('width', String(SVG_WIDTH))
+  clone.setAttribute('height', String(SVG_HEIGHT))
+
+  // Hide away team if none of them have names
+  const awayPlayers = players.value.filter(p => p.team === 'away')
+  if (awayPlayers.every(p => !p.name)) {
+    clone.querySelectorAll('[data-team="away"]').forEach(el => el.remove())
+  }
+
+  const xml = new XMLSerializer().serializeToString(clone)
+  const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
+  const svgUrl = URL.createObjectURL(svgBlob)
+
+  const svgImg = new Image()
+  const qrImg = new Image()
+
+  let loaded = 0
+  const onBothLoaded = () => {
+    if (++loaded < 2) return
+
+    const scale = 2
+    const footerH = 240
+    const padding = 32
+    const totalHeight = SVG_HEIGHT + footerH
+
+    // QR code: fit height without stretching
+    const qrDrawH = footerH - padding * 2
+    const qrAspect = qrImg.naturalWidth / qrImg.naturalHeight
+    const qrDrawW = qrDrawH * qrAspect
+
+    const canvas = document.createElement('canvas')
+    canvas.width = SVG_WIDTH * scale
+    canvas.height = totalHeight * scale
+    const ctx = canvas.getContext('2d')!
+    ctx.scale(scale, scale)
+
+    // Tactical board
+    ctx.drawImage(svgImg, 0, 0, SVG_WIDTH, SVG_HEIGHT)
+    URL.revokeObjectURL(svgUrl)
+
+    // Footer background
+    ctx.fillStyle = '#1a1a2e'
+    ctx.fillRect(0, SVG_HEIGHT, SVG_WIDTH, footerH)
+
+    // Centered title text (in the space left of QR)
+    ctx.fillStyle = '#e0e0e0'
+    ctx.font = 'bold 36px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    const textAreaW = SVG_WIDTH - qrDrawW - padding * 3
+    ctx.fillText('快乐踢球者战术板', textAreaW / 2 + padding, SVG_HEIGHT + footerH / 2)
+
+    // QR code bottom-right, no stretching
+    const qrX = SVG_WIDTH - qrDrawW - padding
+    const qrY = SVG_HEIGHT + (footerH - qrDrawH) / 2
+    ctx.drawImage(qrImg, qrX, qrY, qrDrawW, qrDrawH)
+
+    canvas.toBlob((pngBlob) => {
+      if (!pngBlob) return
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(pngBlob)
+      a.download = `战术板_${new Date().toISOString().slice(0, 10)}.png`
+      a.click()
+      URL.revokeObjectURL(a.href)
+    }, 'image/png')
+  }
+
+  svgImg.onload = onBothLoaded
+  qrImg.onload = onBothLoaded
+  svgImg.src = svgUrl
+  qrImg.src = qrCodeUrl
 }
 </script>

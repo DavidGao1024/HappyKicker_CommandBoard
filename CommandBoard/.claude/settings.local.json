@@ -13,7 +13,8 @@
       "Bash(npx vite)",
       "mcp__chrome-devtools__navigate_page",
       "Bash(npm run build)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(npx vue-tsc:*)"
     ]
   }
 }

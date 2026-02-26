@@ -1,6 +1,7 @@
 <template>
   <g
     class="player-marker"
+    :data-team="player.team"
     :style="{ cursor: isDragging ? 'grabbing' : 'grab' }"
     @pointerdown.stop.prevent="onPointerDown"
     @pointermove.stop="onPointerMove"

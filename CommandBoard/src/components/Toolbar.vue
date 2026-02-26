@@ -99,6 +99,7 @@
         <button title="清除绘制" @click="$emit('clearDrawings')">清除绘制</button>
         <button title="重置全部" @click="$emit('resetAll')">重置全部</button>
         <button title="编辑球员" @click="$emit('editRoster')">编辑球员</button>
+        <button title="保存截图" @click="$emit('saveScreenshot')">保存截图</button>
       </div>
     </div>
   </div>
@@ -129,5 +130,6 @@ defineEmits<{
   clearDrawings: []
   resetAll: []
   editRoster: []
+  saveScreenshot: []
 }>()
 </script>
