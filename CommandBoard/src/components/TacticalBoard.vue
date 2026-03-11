@@ -338,11 +338,25 @@ function onSaveScreenshot() {
 
     canvas.toBlob((pngBlob) => {
       if (!pngBlob) return
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(pngBlob)
-      a.download = `战术板_${new Date().toISOString().slice(0, 10)}.png`
-      a.click()
-      URL.revokeObjectURL(a.href)
+      const fileName = `战术板_${new Date().toISOString().slice(0, 10)}.png`
+      const downloadFallback = () => {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(pngBlob)
+        a.download = fileName
+        a.click()
+        URL.revokeObjectURL(a.href)
+      }
+      try {
+        const file = new File([pngBlob], fileName, { type: 'image/png' })
+        if (navigator.canShare?.({ files: [file] })) {
+          navigator.share({ title: '快乐踢球者战术板', files: [file] })
+            .catch(downloadFallback)
+        } else {
+          downloadFallback()
+        }
+      } catch {
+        downloadFallback()
+      }
     }, 'image/png')
   }
 
