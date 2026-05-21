@@ -72,12 +72,13 @@
       @click.stop
     >
       <div
-        v-for="name in filteredNames"
-        :key="name"
+        v-for="entry in filteredNames"
+        :key="entry.name"
         class="roster-dropdown-item"
-        @click="selectName(activeDropdown, name)"
+        @click="selectName(activeDropdown, entry.name)"
       >
-        {{ name }}
+        <span v-if="entry.number != null" class="roster-dropdown-num">{{ entry.number }}</span>
+        {{ entry.name }}
       </div>
     </div>
   </Teleport>
@@ -86,7 +87,7 @@
 <script setup lang="ts">
 import { computed, watch, reactive, ref } from 'vue'
 import type { Player } from '@/types/player'
-import { ROSTER_NAMES } from '@/data/roster'
+import { ROSTER } from '@/data/roster'
 
 const props = defineProps<{
   visible: boolean
@@ -106,7 +107,7 @@ const dropdownStyle = ref<Record<string, string>>({})
 const homePlayers = computed(() => props.players.filter(p => p.team === 'home'))
 const awayPlayers = computed(() => props.players.filter(p => p.team === 'away'))
 
-const filteredNames = computed(() => ROSTER_NAMES)
+const filteredNames = computed(() => ROSTER)
 
 watch(() => props.visible, (v) => {
   if (v) {
@@ -186,5 +187,19 @@ function onConfirm() {
 
 .roster-dropdown-item:hover {
   background: #f0f0f0;
+}
+
+.roster-dropdown-num {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #666;
+  font-size: 11px;
+  text-align: center;
+  margin-right: 6px;
+  flex-shrink: 0;
 }
 </style>

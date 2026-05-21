@@ -23,13 +23,14 @@
           <label>快速选择</label>
           <div class="roster-pick-grid">
             <button
-              v-for="name in filteredRoster"
-              :key="name"
+              v-for="entry in filteredRoster"
+              :key="entry.name"
               class="roster-pick-btn"
-              :class="{ selected: localName === name }"
-              @click="pickName(name)"
+              :class="{ selected: localName === entry.name }"
+              @click="pickName(entry.name)"
             >
-              {{ name }}
+              <span v-if="entry.number != null" class="roster-num">{{ entry.number }}</span>
+              {{ entry.name }}
             </button>
           </div>
         </div>
@@ -45,7 +46,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import type { Player } from '@/types/player'
-import { ROSTER_NAMES } from '@/data/roster'
+import { ROSTER } from '@/data/roster'
 
 const props = defineProps<{
   visible: boolean
@@ -64,8 +65,8 @@ const hideRoster = ref(false)
 
 const filteredRoster = computed(() => {
   const q = localName.value.trim()
-  if (!q) return ROSTER_NAMES
-  return ROSTER_NAMES.filter(n => n.includes(q))
+  if (!q) return ROSTER
+  return ROSTER.filter(e => e.name.includes(q))
 })
 
 watch(() => props.player, (p) => {
@@ -89,3 +90,19 @@ function onConfirm() {
   emit('close')
 }
 </script>
+
+<style scoped>
+.roster-num {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #666;
+  font-size: 10px;
+  text-align: center;
+  margin-right: 2px;
+  flex-shrink: 0;
+}
+</style>
