@@ -9,6 +9,7 @@
       :colors="DRAWING_COLORS"
       :can-undo="canUndo"
       :can-redo="canRedo"
+      :show-away-team="showAwayTeam"
       @home-formation="onHomeFormation"
       @away-formation="onAwayFormation"
       @set-tool="setTool"
@@ -19,6 +20,7 @@
       @reset-all="onResetAll"
       @edit-roster="rosterDialogVisible = true"
       @save-screenshot="onSaveScreenshot"
+      @toggle-show-away="showAwayTeam = !showAwayTeam"
     />
 
     <div class="pitch-container">
@@ -44,6 +46,7 @@
         <PlayersLayer
           :players="players"
           :svg-el="svgRef"
+          :show-away="showAwayTeam"
           @move="onPlayerMove"
           @drag-start="onPlayerDragStart"
           @drag-end="onPlayerDragEnd"
@@ -88,6 +91,7 @@ import PlayerEditDialog from './PlayerEditDialog.vue'
 import RosterEditDialog from './RosterEditDialog.vue'
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const showAwayTeam = ref(true)
 
 const {
   players,

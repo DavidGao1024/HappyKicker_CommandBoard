@@ -14,6 +14,16 @@
       </select>
     </div>
 
+    <div class="toolbar-section">
+      <button
+        class="toggle-show-btn"
+        :title="showAwayTeam ? '点击仅显示本方' : '点击显示双方'"
+        @click="$emit('toggleShowAway')"
+      >
+        {{ showAwayTeam ? '双方' : '本方' }}
+      </button>
+    </div>
+
     <div class="toolbar-divider" />
 
     <div class="toolbar-section">
@@ -118,6 +128,7 @@ defineProps<{
   colors: string[]
   canUndo: boolean
   canRedo: boolean
+  showAwayTeam: boolean
 }>()
 
 defineEmits<{
@@ -131,5 +142,6 @@ defineEmits<{
   resetAll: []
   editRoster: []
   saveScreenshot: []
+  toggleShowAway: []
 }>()
 </script>

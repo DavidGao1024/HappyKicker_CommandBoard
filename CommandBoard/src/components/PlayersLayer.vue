@@ -24,6 +24,7 @@ import PlayerMarker from './PlayerMarker.vue'
 const props = defineProps<{
   players: Player[]
   svgEl: SVGSVGElement | null
+  showAway?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -72,8 +73,7 @@ const playerRadius = computed(() => {
 const playerHitRadius = computed(() => playerRadius.value * 2)
 
 const sortedPlayers = computed(() => {
-  // Away (red) first, home (white) last so white renders on top
-  const away = props.players.filter(p => p.team === 'away')
+  const away = props.showAway === false ? [] : props.players.filter(p => p.team === 'away')
   const home = props.players.filter(p => p.team === 'home')
   const ordered = [...away, ...home]
   if (!activePlayerId.value) return ordered
