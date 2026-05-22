@@ -24,15 +24,32 @@
       :r="props.radius"
       :fill="fillColor"
       :stroke="strokeColor"
-      :stroke-width="2.5 * props.radius / 18"
+      :stroke-width="2 * props.radius / 14"
     />
+    <!-- Number inside circle -->
     <text
-      v-if="player.name"
+      v-if="player.number != null"
       :x="player.x"
       :y="player.y"
       text-anchor="middle"
       dominant-baseline="central"
-      :fill="textColor"
+      :fill="'#000000'"
+      :font-size="numberFontSize"
+      font-weight="bold"
+      font-family="Arial, sans-serif"
+      pointer-events="none"
+      style="user-select: none"
+    >
+      {{ player.number }}
+    </text>
+    <!-- Name below circle -->
+    <text
+      v-if="player.name"
+      :x="player.x"
+      :y="player.y + props.radius + nameOffset"
+      text-anchor="middle"
+      dominant-baseline="hanging"
+      :fill="nameColor"
       :font-size="nameFontSize"
       font-weight="bold"
       font-family="Arial, sans-serif"
@@ -65,19 +82,22 @@ const emit = defineEmits<{
 
 const { clampX, clampY } = usePitch()
 
-// Adapt font size to name length and radius
 const displayName = computed(() => {
   const name = props.player.name
   if (name.length <= 3) return name
   return name.slice(0, 3)
 })
 
+const numberFontSize = computed(() => {
+  return Math.round(props.radius * 0.9)
+})
+
 const nameFontSize = computed(() => {
-  const scale = props.radius / 18
-  const len = displayName.value.length
-  if (len <= 1) return 14 * scale
-  if (len <= 2) return 12 * scale
-  return 10 * scale
+  return Math.round(props.radius * 0.65)
+})
+
+const nameOffset = computed(() => {
+  return Math.round(props.radius * 0.35)
 })
 
 const fillColor = computed(() =>
@@ -86,8 +106,8 @@ const fillColor = computed(() =>
 const strokeColor = computed(() =>
   props.player.team === 'home' ? '#333333' : '#B71C1C'
 )
-const textColor = computed(() =>
-  props.player.team === 'home' ? '#333333' : '#FFFFFF'
+const nameColor = computed(() =>
+  props.player.team === 'home' ? '#FFFFFF' : '#E53935'
 )
 
 const isDragging = ref(false)
@@ -127,7 +147,6 @@ function onPointerUp(_e: PointerEvent) {
   isDragging.value = false
   emit('dragEnd')
 
-  // Single tap to edit
   if (!hasMoved) {
     emit('edit', props.player)
   }

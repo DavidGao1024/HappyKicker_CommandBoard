@@ -97,7 +97,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  confirm: [changes: { id: string; name: string }[]]
+  confirm: [changes: { id: string; name: string; number: number | null }[]]
 }>()
 
 const localData = reactive<Record<string, string>>({})
@@ -151,11 +151,12 @@ function selectName(id: string, name: string) {
 }
 
 function onConfirm() {
-  const changes: { id: string; name: string }[] = []
+  const changes: { id: string; name: string; number: number | null }[] = []
   for (const p of props.players) {
     const name = localData[p.id]
     if (name !== undefined && name !== p.name) {
-      changes.push({ id: p.id, name })
+      const num = ROSTER.find(e => e.name === name)?.number ?? null
+      changes.push({ id: p.id, name, number: num })
     }
   }
   emit('confirm', changes)

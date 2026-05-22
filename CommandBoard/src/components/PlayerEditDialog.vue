@@ -56,7 +56,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  confirm: [id: string, name: string]
+  confirm: [id: string, name: string, number: number | null]
 }>()
 
 const localName = ref('')
@@ -77,15 +77,20 @@ watch(() => props.player, (p) => {
   }
 })
 
+const pickedNumber = ref<number | null>(null)
+
 function pickName(name: string) {
   hideRoster.value = true
   localName.value = name
+  const entry = ROSTER.find(e => e.name === name)
+  pickedNumber.value = entry?.number ?? null
   nextTick(() => onConfirm())
 }
 
 function onConfirm() {
   if (props.player) {
-    emit('confirm', props.player.id, localName.value)
+    const num = pickedNumber.value ?? ROSTER.find(e => e.name === localName.value)?.number ?? null
+    emit('confirm', props.player.id, localName.value, num)
   }
   emit('close')
 }

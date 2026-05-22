@@ -37,8 +37,8 @@ const emit = defineEmits<{
 const activePlayerId = ref<string | null>(null)
 
 // Dynamic radius: smaller in portrait, larger in landscape.
-const BASE_RADIUS_LANDSCAPE = 20
-const BASE_RADIUS_PORTRAIT = 9
+const BASE_RADIUS_LANDSCAPE = 16
+const BASE_RADIUS_PORTRAIT = 8
 const MIN_SCREEN_RADIUS = 24
 const svgScale = ref(1)
 const isPortrait = ref(false)

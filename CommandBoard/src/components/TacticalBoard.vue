@@ -260,19 +260,19 @@ function onEditPlayer(player: Player) {
   editDialogVisible.value = true
 }
 
-function onEditConfirm(id: string, name: string) {
+function onEditConfirm(id: string, name: string, num: number | null) {
   pushState(takeSnapshot())
-  updatePlayerInfo(id, name)
+  updatePlayerInfo(id, name, num)
 }
 
 // --- Roster edit ---
 const rosterDialogVisible = ref(false)
 
-function onRosterConfirm(changes: { id: string; name: string }[]) {
+function onRosterConfirm(changes: { id: string; name: string; number: number | null }[]) {
   if (changes.length === 0) return
   pushState(takeSnapshot())
   for (const c of changes) {
-    updatePlayerInfo(c.id, c.name)
+    updatePlayerInfo(c.id, c.name, c.number)
   }
 }
 

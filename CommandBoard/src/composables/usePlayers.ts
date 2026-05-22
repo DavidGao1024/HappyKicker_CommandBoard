@@ -21,6 +21,7 @@ function createDefaultPlayers(): Player[] {
       id: nextId(),
       team: 'home',
       name: '',
+      number: null,
       x: toSvgX(pos.x),
       y: toSvgY(pos.y),
     })
@@ -33,6 +34,7 @@ function createDefaultPlayers(): Player[] {
       id: nextId(),
       team: 'away',
       name: '',
+      number: null,
       x: toSvgX(pos.x),
       y: toSvgY(1 - pos.y),
     })
@@ -52,10 +54,10 @@ export function usePlayers() {
     }
   }
 
-  function updatePlayerInfo(id: string, name: string) {
+  function updatePlayerInfo(id: string, name: string, num: number | null = null) {
     const idx = players.value.findIndex(p => p.id === id)
     if (idx !== -1) {
-      players.value[idx] = { ...players.value[idx], name }
+      players.value[idx] = { ...players.value[idx], name, number: num }
     }
   }
 
