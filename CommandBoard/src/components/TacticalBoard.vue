@@ -67,6 +67,7 @@
       :visible="rosterDialogVisible"
       :players="players"
       :position-labels="positionLabelMap"
+      :show-away-team="showAwayTeam"
       @close="rosterDialogVisible = false"
       @confirm="onRosterConfirm"
     />
@@ -101,6 +102,8 @@ const {
   resetAll: resetPlayers,
   getSnapshot: getPlayersSnapshot,
   restoreSnapshot: restorePlayersSnapshot,
+  setCaptain,
+  removeCaptain,
 } = usePlayers()
 
 const { formations, homeFormation, awayFormation } = useFormations()
@@ -260,19 +263,37 @@ function onEditPlayer(player: Player) {
   editDialogVisible.value = true
 }
 
-function onEditConfirm(id: string, name: string, num: number | null) {
+function updateCaptainStatus(id: string, shouldBeCaptain: boolean) {
+  const player = players.value.find(p => p.id === id)
+  if (player) {
+    if (shouldBeCaptain && !player.isCaptain) {
+      setCaptain(id)
+    } else if (!shouldBeCaptain && player.isCaptain) {
+      removeCaptain(id)
+    }
+  }
+}
+
+function onEditConfirm(id: string, name: string, num: number | null, isCaptain: boolean) {
   pushState(takeSnapshot())
   updatePlayerInfo(id, name, num)
+  updateCaptainStatus(id, isCaptain)
 }
 
 // --- Roster edit ---
 const rosterDialogVisible = ref(false)
 
-function onRosterConfirm(changes: { id: string; name: string; number: number | null }[]) {
+function onRosterConfirm(changes: { id: string; name: string; number: number | null; isCaptain: boolean }[]) {
   if (changes.length === 0) return
   pushState(takeSnapshot())
+
   for (const c of changes) {
     updatePlayerInfo(c.id, c.name, c.number)
+    if (c.isCaptain) {
+      setCaptain(c.id)
+    } else {
+      removeCaptain(c.id)
+    }
   }
 }
 

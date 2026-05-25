@@ -7,4 +7,5 @@ export interface Player {
   number: number | null
   x: number
   y: number
+  isCaptain: boolean
 }

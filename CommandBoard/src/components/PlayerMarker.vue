@@ -56,7 +56,7 @@
       pointer-events="none"
       style="user-select: none"
     >
-      {{ displayName }}
+      {{ displayName }} {{ player.isCaptain ? '(C)' : '' }}
     </text>
   </g>
 </template>

@@ -19,6 +19,13 @@
             @click="localName = ''"
           />
         </div>
+        <div class="dialog-field captain-field">
+          <label>队长</label>
+          <label class="switch">
+            <input type="checkbox" v-model="localIsCaptain" />
+            <span class="slider"></span>
+          </label>
+        </div>
         <div class="roster-pick" v-show="!hideRoster">
           <label>快速选择</label>
           <div class="roster-pick-grid">
@@ -56,10 +63,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: []
-  confirm: [id: string, name: string, number: number | null]
+  confirm: [id: string, name: string, number: number | null, isCaptain: boolean]
 }>()
 
 const localName = ref('')
+const localIsCaptain = ref(false)
 const nameInput = ref<HTMLInputElement | null>(null)
 const hideRoster = ref(false)
 
@@ -72,6 +80,7 @@ const filteredRoster = computed(() => {
 watch(() => props.player, (p) => {
   if (p) {
     localName.value = p.name
+    localIsCaptain.value = p.isCaptain
     hideRoster.value = false
     nextTick(() => nameInput.value?.select())
   }
@@ -90,7 +99,7 @@ function pickName(name: string) {
 function onConfirm() {
   if (props.player) {
     const num = pickedNumber.value ?? ROSTER.find(e => e.name === localName.value)?.number ?? null
-    emit('confirm', props.player.id, localName.value, num)
+    emit('confirm', props.player.id, localName.value, num, localIsCaptain.value)
   }
   emit('close')
 }
@@ -109,5 +118,64 @@ function onConfirm() {
   text-align: center;
   margin-right: 2px;
   flex-shrink: 0;
+}
+
+.captain-field {
+  justify-content: flex-start;
+}
+
+.captain-field label:first-child {
+  margin-right: 12px;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4CAF50;
 }
 </style>

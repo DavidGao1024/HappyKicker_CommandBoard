@@ -28,9 +28,13 @@
                   @click.stop="toggleDropdown(p.id, $event)"
                 />
               </div>
+              <label class="switch" @click.stop="toggleCaptain(p.id)">
+                <input type="checkbox" :checked="localCaptains[p.id]" @click.stop.prevent />
+                <span class="slider"></span>
+              </label>
             </div>
           </div>
-          <div class="roster-team">
+          <div class="roster-team" v-if="showAwayTeam">
             <div class="roster-team-header">
               <span class="team-dot team-dot--away"></span>
               客队
@@ -54,6 +58,10 @@
                   @click.stop="toggleDropdown(p.id, $event)"
                 />
               </div>
+              <label class="switch" @click.stop="toggleCaptain(p.id)">
+                <input type="checkbox" :checked="localCaptains[p.id]" @click.stop.prevent />
+                <span class="slider"></span>
+              </label>
             </div>
           </div>
         </div>
@@ -93,14 +101,16 @@ const props = defineProps<{
   visible: boolean
   players: Player[]
   positionLabels: Record<string, string>
+  showAwayTeam: boolean
 }>()
 
 const emit = defineEmits<{
   close: []
-  confirm: [changes: { id: string; name: string; number: number | null }[]]
+  confirm: [changes: { id: string; name: string; number: number | null; isCaptain: boolean }[]]
 }>()
 
 const localData = reactive<Record<string, string>>({})
+const localCaptains = reactive<Record<string, boolean>>({})
 const activeDropdown = ref<string | null>(null)
 const dropdownStyle = ref<Record<string, string>>({})
 
@@ -113,6 +123,7 @@ watch(() => props.visible, (v) => {
   if (v) {
     for (const p of props.players) {
       localData[p.id] = p.name
+      localCaptains[p.id] = p.isCaptain
     }
     activeDropdown.value = null
   }
@@ -125,9 +136,15 @@ function toggleDropdown(id: string, e: MouseEvent) {
     activeDropdown.value = id
     const input = e.target as HTMLInputElement
     const rect = input.getBoundingClientRect()
+
+    // 计算下拉列表高度，确保不会覆盖当前行的开关
+    const dropdownMaxHeight = 350
+    const spaceBelow = window.innerHeight - rect.bottom - 4
+    const shouldShowAbove = spaceBelow < dropdownMaxHeight && rect.top > dropdownMaxHeight
+
     dropdownStyle.value = {
       position: 'fixed',
-      top: `${rect.bottom + 4}px`,
+      top: shouldShowAbove ? `${rect.top - Math.min(dropdownMaxHeight, rect.top) - 4}px` : `${rect.bottom + 4}px`,
       left: `${rect.left}px`,
       width: `${rect.width}px`,
     }
@@ -150,13 +167,43 @@ function selectName(id: string, name: string) {
   activeDropdown.value = null
 }
 
+function toggleCaptain(id: string) {
+  closeDropdown()
+
+  const currentValue = localCaptains[id]
+  const targetPlayer = props.players.find(p => p.id === id)
+  if (!targetPlayer) return
+
+  const team = targetPlayer.team
+
+  // 如果当前是关闭状态，要打开它
+  if (!currentValue) {
+    // 清除同队所有球员的队长状态
+    Object.keys(localCaptains).forEach(playerId => {
+      const player = props.players.find(p => p.id === playerId)
+      if (player && player.team === team) {
+        localCaptains[playerId] = false
+      }
+    })
+    // 设置当前球员为队长
+    localCaptains[id] = true
+  } else {
+    // 如果当前是打开状态，关闭它
+    localCaptains[id] = false
+  }
+}
+
 function onConfirm() {
-  const changes: { id: string; name: string; number: number | null }[] = []
+  const changes: { id: string; name: string; number: number | null; isCaptain: boolean }[] = []
   for (const p of props.players) {
     const name = localData[p.id]
-    if (name !== undefined && name !== p.name) {
+    const isCaptain = localCaptains[p.id] ?? false
+    const nameChanged = name !== undefined && name !== p.name
+    const captainChanged = isCaptain !== p.isCaptain
+
+    if (nameChanged || captainChanged) {
       const num = ROSTER.find(e => e.name === name)?.number ?? null
-      changes.push({ id: p.id, name, number: num })
+      changes.push({ id: p.id, name: name ?? p.name, number: num, isCaptain })
     }
   }
   emit('confirm', changes)
@@ -202,5 +249,62 @@ function onConfirm() {
   text-align: center;
   margin-right: 6px;
   flex-shrink: 0;
+}
+
+.roster-captain-checkbox {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-left: 8px;
+  z-index: 1;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4CAF50;
 }
 </style>

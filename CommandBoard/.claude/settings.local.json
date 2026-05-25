@@ -15,7 +15,12 @@
       "Bash(npm run build)",
       "Bash(timeout:*)",
       "Bash(npx vue-tsc:*)",
-      "Bash(xxd)"
+      "Bash(xxd)",
+      "Bash(npx playwright *)",
+      "Bash(npm run *)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__click"
     ]
   }
 }

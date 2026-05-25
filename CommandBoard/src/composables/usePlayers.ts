@@ -24,6 +24,7 @@ function createDefaultPlayers(): Player[] {
       number: null,
       x: toSvgX(pos.x),
       y: toSvgY(pos.y),
+      isCaptain: false,
     })
   }
 
@@ -37,6 +38,7 @@ function createDefaultPlayers(): Player[] {
       number: null,
       x: toSvgX(pos.x),
       y: toSvgY(1 - pos.y),
+      isCaptain: false,
     })
   }
 
@@ -93,6 +95,27 @@ export function usePlayers() {
     players.value = snapshot.map(p => ({ ...p }))
   }
 
+  function setCaptain(playerId: string) {
+    const targetPlayer = players.value.find(p => p.id === playerId)
+    if (!targetPlayer) return
+
+    const team = targetPlayer.team
+
+    // 清除同队所有球员的队长标记，并设置目标球员为队长
+    players.value = players.value.map(p => {
+      if (p.team === team) {
+        return { ...p, isCaptain: p.id === playerId }
+      }
+      return p
+    })
+  }
+
+  function removeCaptain(playerId: string) {
+    players.value = players.value.map(p =>
+      p.id === playerId ? { ...p, isCaptain: false } : p
+    )
+  }
+
   return {
     players,
     updatePlayerPosition,
@@ -101,5 +124,7 @@ export function usePlayers() {
     resetAll,
     getSnapshot,
     restoreSnapshot,
+    setCaptain,
+    removeCaptain,
   }
 }
