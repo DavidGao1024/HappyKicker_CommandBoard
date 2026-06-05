@@ -45,6 +45,26 @@ function createDefaultPlayers(): Player[] {
   return players
 }
 
+export const STROKE_COLORS = [
+  '#FFFFFF',
+  '#B71C1C',
+  '#000000',
+  '#1565C0',
+  '#F9A825',
+  '#6A1B9A',
+  '#E65100',
+]
+
+export const DEFAULT_HOME_STROKE = '#F9A825'
+export const DEFAULT_AWAY_STROKE = '#B71C1C'
+export const DEFAULT_HOME_FILL = '#1565C0'
+export const DEFAULT_AWAY_FILL = '#B71C1C'
+
+const homeStrokeColor = ref(DEFAULT_HOME_STROKE)
+const awayStrokeColor = ref(DEFAULT_AWAY_STROKE)
+const homeFillColor = ref(DEFAULT_HOME_FILL)
+const awayFillColor = ref(DEFAULT_AWAY_FILL)
+
 const players = ref<Player[]>(createDefaultPlayers())
 
 export function usePlayers() {
@@ -82,17 +102,47 @@ export function usePlayers() {
     })
   }
 
+  function setStrokeColor(team: Team, color: string) {
+    if (team === 'home') {
+      homeStrokeColor.value = color
+    } else {
+      awayStrokeColor.value = color
+    }
+  }
+
+  function setFillColor(team: Team, color: string) {
+    if (team === 'home') {
+      homeFillColor.value = color
+    } else {
+      awayFillColor.value = color
+    }
+  }
+
   function resetAll() {
     idCounter = 0
     players.value = createDefaultPlayers()
+    homeStrokeColor.value = DEFAULT_HOME_STROKE
+    awayStrokeColor.value = DEFAULT_AWAY_STROKE
+    homeFillColor.value = DEFAULT_HOME_FILL
+    awayFillColor.value = DEFAULT_AWAY_FILL
   }
 
-  function getSnapshot(): Player[] {
-    return players.value.map(p => ({ ...p }))
+  function getSnapshot(): { players: Player[]; homeStroke: string; awayStroke: string; homeFill: string; awayFill: string } {
+    return {
+      players: players.value.map(p => ({ ...p })),
+      homeStroke: homeStrokeColor.value,
+      awayStroke: awayStrokeColor.value,
+      homeFill: homeFillColor.value,
+      awayFill: awayFillColor.value,
+    }
   }
 
-  function restoreSnapshot(snapshot: Player[]) {
-    players.value = snapshot.map(p => ({ ...p }))
+  function restoreSnapshot(snapshot: { players: Player[]; homeStroke: string; awayStroke: string; homeFill: string; awayFill: string }) {
+    players.value = snapshot.players.map(p => ({ ...p }))
+    homeStrokeColor.value = snapshot.homeStroke
+    awayStrokeColor.value = snapshot.awayStroke
+    homeFillColor.value = snapshot.homeFill
+    awayFillColor.value = snapshot.awayFill
   }
 
   function setCaptain(playerId: string) {
@@ -118,9 +168,15 @@ export function usePlayers() {
 
   return {
     players,
+    homeStrokeColor,
+    awayStrokeColor,
+    homeFillColor,
+    awayFillColor,
     updatePlayerPosition,
     updatePlayerInfo,
     applyFormationToTeam,
+    setStrokeColor,
+    setFillColor,
     resetAll,
     getSnapshot,
     restoreSnapshot,

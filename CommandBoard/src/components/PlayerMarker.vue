@@ -33,7 +33,7 @@
       :y="player.y"
       text-anchor="middle"
       dominant-baseline="central"
-      :fill="'#000000'"
+      :fill="strokeColor"
       :font-size="numberFontSize"
       font-weight="bold"
       font-family="Arial, sans-serif"
@@ -65,6 +65,7 @@
 import { ref, computed } from 'vue'
 import type { Player } from '@/types/player'
 import { usePitch } from '@/composables/usePitch'
+import { usePlayers } from '@/composables/usePlayers'
 
 const props = defineProps<{
   player: Player
@@ -81,6 +82,7 @@ const emit = defineEmits<{
 }>()
 
 const { clampX, clampY } = usePitch()
+const { homeStrokeColor, awayStrokeColor, homeFillColor, awayFillColor } = usePlayers()
 
 const displayName = computed(() => {
   const name = props.player.name
@@ -101,10 +103,10 @@ const nameOffset = computed(() => {
 })
 
 const fillColor = computed(() =>
-  props.player.team === 'home' ? '#FFFFFF' : '#E53935'
+  props.player.team === 'home' ? homeFillColor.value : awayFillColor.value
 )
 const strokeColor = computed(() =>
-  props.player.team === 'home' ? '#333333' : '#B71C1C'
+  props.player.team === 'home' ? homeStrokeColor.value : awayStrokeColor.value
 )
 const nameColor = computed(() =>
   props.player.team === 'home' ? '#FFFFFF' : '#E53935'

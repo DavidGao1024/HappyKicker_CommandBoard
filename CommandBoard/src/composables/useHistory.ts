@@ -3,7 +3,7 @@ import type { Player } from '@/types/player'
 import type { DrawingElement } from '@/types/drawing'
 
 interface Snapshot {
-  players: Player[]
+  players: { players: Player[]; homeStroke: string; awayStroke: string; homeFill: string; awayFill: string }
   drawings: DrawingElement[]
 }
 

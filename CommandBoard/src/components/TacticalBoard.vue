@@ -10,6 +10,11 @@
       :can-undo="canUndo"
       :can-redo="canRedo"
       :show-away-team="showAwayTeam"
+      :home-stroke-color="homeStrokeColor"
+      :away-stroke-color="awayStrokeColor"
+      :home-fill-color="homeFillColor"
+      :away-fill-color="awayFillColor"
+      :stroke-colors="STROKE_COLORS"
       @home-formation="onHomeFormation"
       @away-formation="onAwayFormation"
       @set-tool="setTool"
@@ -21,6 +26,10 @@
       @edit-roster="rosterDialogVisible = true"
       @save-screenshot="onSaveScreenshot"
       @toggle-show-away="showAwayTeam = !showAwayTeam"
+      @set-home-stroke-color="onSetHomeStrokeColor"
+      @set-away-stroke-color="onSetAwayStrokeColor"
+      @set-home-fill-color="onSetHomeFillColor"
+      @set-away-fill-color="onSetAwayFillColor"
     />
 
     <div class="pitch-container">
@@ -77,7 +86,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { SVG_WIDTH, SVG_HEIGHT } from '@/composables/usePitch'
-import { usePlayers } from '@/composables/usePlayers'
+import { usePlayers, STROKE_COLORS } from '@/composables/usePlayers'
 import { useFormations } from '@/composables/useFormations'
 import { useDrawing, DRAWING_COLORS } from '@/composables/useDrawing'
 import { useHistory } from '@/composables/useHistory'
@@ -92,7 +101,7 @@ import PlayerEditDialog from './PlayerEditDialog.vue'
 import RosterEditDialog from './RosterEditDialog.vue'
 
 const svgRef = ref<SVGSVGElement | null>(null)
-const showAwayTeam = ref(true)
+const showAwayTeam = ref(false)
 
 const {
   players,
@@ -104,6 +113,12 @@ const {
   restoreSnapshot: restorePlayersSnapshot,
   setCaptain,
   removeCaptain,
+  homeStrokeColor,
+  awayStrokeColor,
+  homeFillColor,
+  awayFillColor,
+  setStrokeColor,
+  setFillColor,
 } = usePlayers()
 
 const { formations, homeFormation, awayFormation } = useFormations()
@@ -130,7 +145,7 @@ function takeSnapshot() {
   return { players: getPlayersSnapshot(), drawings: getDrawingsSnapshot() }
 }
 
-function restoreFromSnapshot(snap: { players: Player[]; drawings: ReturnType<typeof getDrawingsSnapshot> }) {
+function restoreFromSnapshot(snap: { players: ReturnType<typeof getPlayersSnapshot>; drawings: ReturnType<typeof getDrawingsSnapshot> }) {
   restorePlayersSnapshot(snap.players)
   restoreDrawingsSnapshot(snap.drawings)
 }
@@ -240,6 +255,26 @@ function onResetAll() {
   clearHistory()
   homeFormation.value = formations[0].name
   awayFormation.value = formations[0].name
+}
+
+function onSetHomeStrokeColor(color: string) {
+  pushState(takeSnapshot())
+  setStrokeColor('home', color)
+}
+
+function onSetAwayStrokeColor(color: string) {
+  pushState(takeSnapshot())
+  setStrokeColor('away', color)
+}
+
+function onSetHomeFillColor(color: string) {
+  pushState(takeSnapshot())
+  setFillColor('home', color)
+}
+
+function onSetAwayFillColor(color: string) {
+  pushState(takeSnapshot())
+  setFillColor('away', color)
 }
 
 // --- Player edit ---
