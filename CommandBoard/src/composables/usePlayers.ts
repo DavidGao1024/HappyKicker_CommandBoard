@@ -48,11 +48,12 @@ function createDefaultPlayers(): Player[] {
 export const STROKE_COLORS = [
   '#FFFFFF',
   '#B71C1C',
-  '#000000',
+  '#1a5c32',
   '#1565C0',
   '#F9A825',
   '#6A1B9A',
   '#E65100',
+  '#FFD600',
 ]
 
 export const DEFAULT_HOME_STROKE = '#F9A825'
