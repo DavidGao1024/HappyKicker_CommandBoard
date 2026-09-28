@@ -35,7 +35,7 @@ export const ROSTER: RosterEntry[] = [
   { name: '39号', number: 39 },
   { name: '77号', number: 77 },
   { name: '哆啦A梦', number: 78 },
-  { name: '99号', number: 99 },
+  { name: '金鑫', number: 99 },
 ]
 
 export const ROSTER_NAMES: string[] = ROSTER.map(r => r.name)
